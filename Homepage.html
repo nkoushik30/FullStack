@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Finder - Home</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0f0f1e;
+            color: #fff;
+            background-image: url('/api/placeholder/1920/1080');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: rgba(10, 10, 25, 0.9);
+            padding: 20px 0;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar h2 {
+            color: #e50914;
+            text-align: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            font-size: 28px;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 8px;
+        }
+        
+        .sidebar a {
+            display: block;
+            padding: 12px 25px;
+            color: #ddd;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover {
+            background: rgba(229, 9, 20, 0.8);
+            color: white;
+            transform: translateX(10px);
+            border-left: 4px solid white;
+        }
+        
+        .sidebar i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            animation: fadeInDown 1s;
+        }
+        
+        header h2 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(229, 9, 20, 0.7);
+        }
+        
+        header p {
+            font-size: 18px;
+            color: #ccc;
+        }
+        
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s;
+        }
+        
+        .search-container input {
+            width: 60%;
+            padding: 15px;
+            border: none;
+            border-radius: 30px 0 0 30px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            outline: none;
+        }
+        
+        .search-container button {
+            padding: 15px 25px;
+            background: #e50914;
+            color: white;
+            border: none;
+            border-radius: 0 30px 30px 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .search-container button:hover {
+            background: #b30710;
+            transform: scale(1.05);
+        }
+        
+        .movie-results {
+            background: rgba(20, 20, 40, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .movie-results h3 {
+            font-size: 28px;
+            color: #e50914;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+        
+        .movie-results p {
+            margin-bottom: 15px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .movie-results strong {
+            color: #e5e5e5;
+        }
+        
+        .movie-results p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .movie-card {
+            display: flex;
+            flex-direction: column;
+            background: rgba(30, 30, 60, 0.9);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .movie-poster {
+            height: 200px;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .movie-info {
+            padding: 20px;
+        }
+        
+        .rating {
+            color: gold;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .signin-message {
+            text-align: center;
+            padding: 20px;
+            background: rgba(229, 9, 20, 0.2);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .signin-message a {
+            color: #e50914;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .signin-message a:hover {
+            text-decoration: underline;
+        }
+        
+        .user-status {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .search-container input {
+                width: 70%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Movie Finder</h2>
+            <ul>
+                <li><a href="Homepage.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#"><i class="fas fa-search"></i> Search Movies</a></li>
+                <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="signin.html"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+                <li><a href="signup.html"><i class="fas fa-user-plus"></i> Sign Up</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="user-status" id="userStatus"></div>
+            
+            <header>
+                <h2>Welcome to Movie Finder</h2>
+                <p>Discover and explore your favorite movies instantly!</p>
+            </header>
+            
+            <div class="search-container">
+                <input type="text" id="movieInput" placeholder="Enter movie name...">
+                <button onclick="handleSearch()"><i class="fas fa-search"></i> Search</button>
+            </div>
+            
+            <div class="movie-results" id="movieResults">
+                <p>Enter a movie title to see details...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let movieDataset = [];
+        let isUserLoggedIn = false; // We'll use this to track login status
+        
+        // Check if user is logged in (using localStorage for demo purposes)
+        function checkLoginStatus() {
+            // In a real app, you would use more secure methods like sessions or tokens
+            const user = localStorage.getItem('loggedInUser');
+            isUserLoggedIn = !!user;
+            
+            // Update UI based on login status
+            if (isUserLoggedIn) {
+                document.getElementById('userStatus').innerHTML = 
+                    `Logged in as: <strong>${user}</strong> | <a href="#" onclick="logout()">Logout</a>`;
+            } else {
+                document.getElementById('userStatus').innerHTML = 
+                    `<span>Not logged in</span>`;
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            checkLoginStatus();
+            alert('You have been logged out');
+        }
+        
+        // Handle search button click
+        function handleSearch() {
+                searchMovie();
+        
+        }
+        
+        // Fetch movie data from output.json
+        async function loadMovies() {
+            try {
+                const response = await fetch("output.json");
+                movieDataset = await response.json();
+                console.log("Movies loaded:", movieDataset.length);
+                
+                // Display random movie suggestions
+                displayRandomMovies();
+            } catch (error) {
+                console.error("Error loading movie data:", error);
+                document.getElementById("movieResults").innerHTML = 
+                    "<p>Error loading movie database. Please try again later.</p>";
+            }
+        }
+        
+        function displayRandomMovies() {
+            // This would normally show random movies from the dataset
+            // For demo purposes, we'll just show a message
+            if (movieDataset.length > 0) {
+                document.getElementById("movieResults").innerHTML = 
+                    "<p>Try searching for one of our popular movies!</p>";
+            }
+        }
+        
+        function searchMovie() {
+            let input = document.getElementById("movieInput").value.toLowerCase();
+            let resultDiv = document.getElementById("movieResults");
+            
+            if (!input) {
+                resultDiv.innerHTML = "<p>Please enter a movie title to search.</p>";
+                return;
+            }
+            
+            let foundMovie = movieDataset.find(movie => 
+                movie.title.toLowerCase() === input || 
+                movie.title.toLowerCase().includes(input));
+            
+            if (foundMovie) {
+                resultDiv.innerHTML = `
+                    <h3>${foundMovie.title} (${foundMovie.year})</h3>
+                    <p><strong>Certificate:</strong> ${foundMovie.certificate || 'N/A'}</p>
+                    <p><strong>Runtime:</strong> ${foundMovie.runtime || 'N/A'}</p>
+                    <p><strong>Genre:</strong> ${foundMovie.genre || 'N/A'}</p>
+                    <p><strong>Description:</strong> ${foundMovie.desc || 'No description available.'}</p>
+                    <p>
+                        <span class="rating">⭐ ${foundMovie.rating || 'N/A'}/10</span>
+                        <strong>Votes:</strong> ${foundMovie.votes || '0'}
+                    </p>
+                `;
+            } else {
+                resultDiv.innerHTML = "<p>Movie not found. Please try another title.</p>";
+            }
+        }
+        
+        // Allow Enter key to trigger search
+        document.getElementById("movieInput").addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                handleSearch();
+            }
+        });
+        
+        // Initialize when page loads
+        window.onload = function() {
+            loadMovies();
+            checkLoginStatus();
+        };
+    </script>
+</body>
+</html>

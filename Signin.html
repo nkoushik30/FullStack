@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In - YourLogo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+    }
+
+    header {
+      background-color: #1e88e5;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      padding: 0;
+      margin: 0;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      min-height: calc(100vh - 160px);
+    }
+
+    .signin-container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .signin-header h1 {
+      margin-bottom: 10px;
+    }
+
+    .signin-header p {
+      color: #555;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .signin-button-large {
+      width: 100%;
+      padding: 12px;
+      background-color: #1e88e5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .signin-button-large:hover {
+      background-color: #1565c0;
+    }
+
+    .form-footer {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .form-footer a {
+      color: #1e88e5;
+      text-decoration: none;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .back-home {
+      display: block;
+      margin-top: 10px;
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      background-color: #eee;
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXUQaZOfQzGlA5J2RCPxpL8ZKuhsrZ6Ho",
+      authDomain: "project1-758d6.firebaseapp.com",
+      projectId: "project1-758d6",
+      storageBucket: "project1-758d6.appspot.com",
+      messagingSenderId: "495873817240",
+      appId: "1:495873817240:web:764d2fa14dd45ceb11eeed"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const signinForm = document.getElementById("signin-form");
+
+      signinForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        const submitButton = signinForm.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.textContent = "Signing In...";
+        submitButton.disabled = true;
+
+        // Clear previous messages
+        clearMessages();
+
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          showSuccess("Sign in successful! Redirecting...");
+          localStorage.setItem("userEmail", userCredential.user.email);
+
+          setTimeout(() => {
+            window.location.href = "Homepage.html";
+          }, 1500);
+        } catch (error) {
+          console.error(error);
+          if (error.code === "auth/user-not-found") {
+            showError("No user found with this email. Please sign up.");
+          } else if (error.code === "auth/wrong-password") {
+            showError("Incorrect password. Please try again.");
+          } else {
+            showError("Error: " + error.message);
+          }
+        } finally {
+          submitButton.textContent = originalText;
+          submitButton.disabled = false;
+        }
+      });
+
+      function showError(message) {
+        let div = document.getElementById("error-message");
+        if (!div) {
+          div = document.createElement("div");
+          div.id = "error-message";
+          div.style.backgroundColor = "#ffebee";
+          div.style.color = "#c62828";
+          div.style.padding = "10px";
+          div.style.marginBottom = "10px";
+          div.style.borderRadius = "5px";
+          signinForm.parentNode.insertBefore(div, signinForm);
+        }
+        div.textContent = message;
+        div.style.display = "block";
+      }
+
+      function showSuccess(message) {
+        let div = document.getElementById("success-message");
+        if (!div) {
+          div = document.createElement("div");
+          div.id = "success-message";
+          div.style.backgroundColor = "#e8f5e9";
+          div.style.color = "#2e7d32";
+          div.style.padding = "10px";
+          div.style.marginBottom = "10px";
+          div.style.borderRadius = "5px";
+          signinForm.parentNode.insertBefore(div, signinForm);
+        }
+        div.textContent = message;
+        div.style.display = "block";
+      }
+
+      function clearMessages() {
+        const error = document.getElementById("error-message");
+        const success = document.getElementById("success-message");
+        if (error) error.style.display = "none";
+        if (success) success.style.display = "none";
+      }
+    });
+  </script>
+</head>
+<body>
+  <header>
+    <div class="logo">Signin Page</div>
+    <nav>
+      <ul>
+        <li><a href="Homepage.html">Home</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="signin-container">
+      <div class="signin-header">
+        <h1>Sign In</h1>
+        <p>Welcome back! Please enter your details</p>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="signin-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Enter your email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required />
+        </div>
+
+        <button type="submit" class="signin-button-large">Sign In</button>
+
+        <div class="form-footer">
+          <p>Forgot password? <a href="#">Reset here</a></p>
+          <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+          <a href="Homepage.html" class="back-home">← Back to home</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 YourCompany. All rights reserved.</p>
+  </footer>
+</body>
+</html>
